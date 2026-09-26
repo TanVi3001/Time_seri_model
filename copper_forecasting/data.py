@@ -102,6 +102,35 @@ def split_bounds(
     return SplitBounds(train_end, validation_end, n_rows)
 
 
+def split_date_ranges(
+    dates: np.ndarray, bounds: SplitBounds
+) -> dict[str, dict[str, str | int | float | None]]:
+    """Return inclusive start/end dates for each raw-row split."""
+
+    if len(dates) != bounds.total_rows:
+        raise ValueError("dates length must match split bounds")
+
+    def serialize(value: object) -> str | int | float | None:
+        if isinstance(value, (pd.Timestamp, np.datetime64)):
+            return pd.Timestamp(value).isoformat()
+        if isinstance(value, np.generic):
+            value = value.item()
+        return value if isinstance(value, (str, int, float)) else None
+
+    segments = {
+        "train": (0, bounds.train_end),
+        "validation": (bounds.train_end, bounds.validation_end),
+        "test": (bounds.validation_end, bounds.total_rows),
+    }
+    return {
+        name: {
+            "start": serialize(dates[start]),
+            "end": serialize(dates[end - 1]),
+        }
+        for name, (start, end) in segments.items()
+    }
+
+
 def prepare_data(
     frame: pd.DataFrame,
     input_columns: Sequence[str],
@@ -111,35 +140,45 @@ def prepare_data(
     train_ratio: float = 0.8,
     validation_ratio: float = 0.1,
 ) -> PreparedData:
-    """Fit MinMax scalers on raw training rows and create split-safe windows."""
+    """Sort/validate rows, then scale training rows and create split-safe windows."""
+
+    data = frame.copy()
+    dataset_source = frame.attrs.get("source_path")
+    if "date" in data.columns:
+        try:
+            data["date"] = pd.to_datetime(data["date"], errors="raise")
+        except (TypeError, ValueError) as exc:
+            raise ValueError("Dataset contains an invalid date") from exc
+        if data["date"].isna().any():
+            raise ValueError("Dataset contains a missing date")
+        if data["date"].duplicated().any():
+            raise ValueError("Dataset contains duplicate dates")
+        data = data.sort_values("date", kind="stable").reset_index(drop=True)
 
     inputs = tuple(input_columns)
     if not inputs:
         raise ValueError("At least one input column is required")
     if len(set(inputs)) != len(inputs):
         raise ValueError("input_columns must not contain duplicates")
-    missing = sorted((set(inputs) | {target_column}) - set(frame.columns))
+    missing = sorted((set(inputs) | {target_column}) - set(data.columns))
     if missing:
         raise ValueError(f"Missing required data columns: {', '.join(missing)}")
     if lookback < 1 or horizon < 1:
         raise ValueError("lookback and horizon must be positive integers")
 
     try:
-        feature_values = frame.loc[:, inputs].to_numpy(dtype=float)
-        target_values = frame.loc[:, [target_column]].to_numpy(dtype=float)
+        feature_values = data.loc[:, inputs].to_numpy(dtype=float)
+        target_values = data.loc[:, [target_column]].to_numpy(dtype=float)
     except (TypeError, ValueError) as exc:
         raise ValueError("Input and target columns must contain numeric values") from exc
     if not np.isfinite(feature_values).all() or not np.isfinite(target_values).all():
         raise ValueError("Input and target columns must contain only finite values")
 
-    bounds = split_bounds(len(frame), train_ratio, validation_ratio)
-    if "date" in frame.columns:
-        try:
-            dates = pd.to_datetime(frame["date"], errors="raise").to_numpy()
-        except (TypeError, ValueError) as exc:
-            raise ValueError("Dataset contains an invalid date") from exc
+    bounds = split_bounds(len(data), train_ratio, validation_ratio)
+    if "date" in data.columns:
+        dates = data["date"].to_numpy()
     else:
-        dates = np.arange(len(frame), dtype=int)
+        dates = np.arange(len(data), dtype=int)
 
     feature_scaler = MinMaxScaler()
     target_scaler = MinMaxScaler()
@@ -149,7 +188,7 @@ def prepare_data(
 
     def build_batch(split_start: int, split_end: int) -> WindowBatch:
         min_origin = max(lookback - 1, split_start - 1)
-        max_origin = min(split_end - horizon - 1, len(frame) - horizon - 1)
+        max_origin = min(split_end - horizon - 1, len(data) - horizon - 1)
         origins = np.arange(min_origin, max_origin + 1, dtype=int)
         if origins.size == 0:
             raise ValueError(
@@ -182,7 +221,7 @@ def prepare_data(
         target_scaler=target_scaler,
         bounds=bounds,
         dates=dates,
-        dataset_source=frame.attrs.get("source_path"),
+        dataset_source=dataset_source,
         input_columns=inputs,
         target_column=target_column,
         lookback=lookback,

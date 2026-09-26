@@ -13,7 +13,7 @@ import pandas as pd
 import sklearn
 import tensorflow as tf
 
-from .data import PreparedData, prepare_data
+from .data import PreparedData, prepare_data, split_date_ranges
 from .metrics import evaluate_forecast
 from .models import build_one_step_model, set_seed
 from .training import fit_model
@@ -141,6 +141,7 @@ def run_one_step_experiment(
             "validation_end": int(prepared_data.bounds.validation_end),
             "total_rows": int(prepared_data.bounds.total_rows),
         },
+        "split_dates": split_date_ranges(prepared_data.dates, prepared_data.bounds),
         "scaler": {
             "type": "MinMaxScaler",
             "fit_rows": [0, int(prepared_data.bounds.train_end)],

@@ -57,11 +57,21 @@ def test_architecture_comparison_uses_same_dates_original_units_and_saves_artifa
         assert result.metadata["parameter_count"] > 0
         assert result.metadata["training_seconds"] >= 0.0
         assert result.metadata["inference_seconds"] >= 0.0
+        dates = make_market_frame()["date"]
+        assert result.metadata["split_dates"] == {
+            "train": {"start": dates.iloc[0].isoformat(), "end": dates.iloc[47].isoformat()},
+            "validation": {
+                "start": dates.iloc[48].isoformat(),
+                "end": dates.iloc[53].isoformat(),
+            },
+            "test": {"start": dates.iloc[54].isoformat(), "end": dates.iloc[59].isoformat()},
+        }
 
         run_dir = tmp_path / result.run_id
         metadata = json.loads((run_dir / "metadata.json").read_text(encoding="utf-8"))
         saved_predictions = pd.read_csv(run_dir / "predictions.csv")
         saved_metrics = json.loads((run_dir / "metrics.json").read_text(encoding="utf-8"))
         assert metadata["seed"] == 42
+        assert metadata["split_dates"] == result.metadata["split_dates"]
         assert len(saved_predictions) == len(expected_dates)
         assert saved_metrics == result.metrics

@@ -67,6 +67,25 @@ def test_scalers_fit_train_rows_only() -> None:
     assert prepared.target_scaler.data_max_.tolist() == [15.0]
 
 
+def test_prepare_data_sorts_unsorted_dataframe_before_splitting() -> None:
+    frame = make_frame().iloc[[*range(19, -1, -1)]]
+
+    prepared = prepare_data(frame, ["copper", "other"], "copper", lookback=3)
+
+    assert prepared.dates.tolist() == pd.date_range(
+        "2024-01-01", periods=20, freq="D"
+    ).to_numpy().tolist()
+    assert prepared.feature_scaler.data_max_.tolist() == [15.0, 150.0]
+    assert prepared.train.target_indices[:, 0].max() == 15
+
+
+def test_prepare_data_rejects_duplicate_dates() -> None:
+    frame = pd.concat([make_frame(), make_frame().iloc[[0]]], ignore_index=True)
+
+    with pytest.raises(ValueError, match="duplicate dates"):
+        prepare_data(frame, ["copper", "other"], "copper", lookback=3)
+
+
 def test_windows_are_assigned_by_target_indices() -> None:
     prepared = prepare_data(make_frame(), ["copper", "other"], "copper", lookback=3)
 
@@ -105,4 +124,3 @@ def test_direct_multioutput_window_keeps_full_horizon_inside_each_split() -> Non
     assert prepared.validation.target_indices.tolist() == [[16, 17]]
     assert prepared.test.target_indices.tolist() == [[18, 19]]
     assert np.all(prepared.train.target_indices < prepared.bounds.train_end)
-

@@ -10,11 +10,11 @@ Dataset này không phải bản tái lập chính xác bộ 1990–2009, 4,870 
 
 ## Cài đặt trên Windows
 
-Runner đã được chạy với Python 3.12, TensorFlow 2.21 và CPU trên Windows.
+Runner đã được chạy với Python 3.12.10, TensorFlow 2.21 và CPU trên Windows. Dependency được ghim trong `requirements-win-py312.lock.txt`.
 
 ```powershell
 py -3.12 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m pip install -r requirements-win-py312.lock.txt
 ```
 
 ## Chạy toàn bộ giao thức
@@ -48,7 +48,7 @@ Mỗi run có thư mục riêng với `metadata.json`, `metrics.json` và `predi
 
 ## Kết quả thực nghiệm ngày 26-09-2026
 
-Một lần chạy với seed 42 trên test 2006–2026 cho kết quả sau (giá đồng USD/pound):
+Một lần chạy với seed 42; tập test theo thời gian kéo dài từ 2024-07-09 đến 2026-09-25, trên dataset 2006–2026, cho kết quả sau (giá đồng USD/pound):
 
 | Mô hình | MSE | RMSE | MAE | MAPE | Train (s) | Best epoch |
 |---|---:|---:|---:|---:|---:|---:|

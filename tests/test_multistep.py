@@ -112,4 +112,17 @@ def test_ims_and_dms_use_the_same_origins_and_write_horizon_metrics(tmp_path: Pa
         assert result.metadata["seed"] == 42
         assert result.metadata["horizon"] == 3
         assert len(result.metadata["metrics_by_horizon"]) == 3
+        dates = make_copper_frame()["date"]
+        assert result.metadata["split_dates"] == {
+            "train": {"start": dates.iloc[0].isoformat(), "end": dates.iloc[47].isoformat()},
+            "validation": {
+                "start": dates.iloc[48].isoformat(),
+                "end": dates.iloc[53].isoformat(),
+            },
+            "test": {"start": dates.iloc[54].isoformat(), "end": dates.iloc[59].isoformat()},
+        }
         assert (tmp_path / result.run_id / "metrics_by_horizon.csv").is_file()
+        saved_metadata = pd.read_json(
+            tmp_path / result.run_id / "metadata.json", typ="series"
+        )
+        assert saved_metadata["split_dates"] == result.metadata["split_dates"]
