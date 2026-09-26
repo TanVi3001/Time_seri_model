@@ -40,6 +40,7 @@ class PreparedData:
     feature_scaler: MinMaxScaler
     target_scaler: MinMaxScaler
     bounds: SplitBounds
+    dates: np.ndarray
     input_columns: tuple[str, ...]
     target_column: str
     lookback: int
@@ -129,6 +130,14 @@ def prepare_data(
         raise ValueError("Input and target columns must contain only finite values")
 
     bounds = split_bounds(len(frame), train_ratio, validation_ratio)
+    if "date" in frame.columns:
+        try:
+            dates = pd.to_datetime(frame["date"], errors="raise").to_numpy()
+        except (TypeError, ValueError) as exc:
+            raise ValueError("Dataset contains an invalid date") from exc
+    else:
+        dates = np.arange(len(frame), dtype=int)
+
     feature_scaler = MinMaxScaler()
     target_scaler = MinMaxScaler()
     feature_scaler.fit(feature_values[: bounds.train_end])
@@ -169,6 +178,7 @@ def prepare_data(
         feature_scaler=feature_scaler,
         target_scaler=target_scaler,
         bounds=bounds,
+        dates=dates,
         input_columns=inputs,
         target_column=target_column,
         lookback=lookback,
