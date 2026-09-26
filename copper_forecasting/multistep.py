@@ -137,6 +137,8 @@ def _run_result(
     origins = np.repeat(test.origin_indices, prepared_data.horizon)
     flattened_indices = target_indices.reshape(-1)
     dates = np.asarray(prepared_data.dates)[flattened_indices]
+    date_start = _metadata_date(prepared_data.dates[0])
+    date_end = _metadata_date(prepared_data.dates[-1])
     predictions = pd.DataFrame(
         {
             "date": dates,
@@ -156,11 +158,17 @@ def _run_result(
         "strategy": strategy,
         "seed": int(seed),
         "dataset_rows": int(prepared_data.bounds.total_rows),
-        "date_start": _metadata_date(prepared_data.dates[0]),
-        "date_end": _metadata_date(prepared_data.dates[-1]),
+        "dataset_source": prepared_data.dataset_source or "provided DataFrame",
+        "date_start": date_start,
+        "date_end": date_end,
+        "dataset_version": {
+            "rows": int(prepared_data.bounds.total_rows),
+            "date_start": date_start,
+            "date_end": date_end,
+        },
         "input_columns": list(prepared_data.input_columns),
         "target_column": prepared_data.target_column,
-        "target_unit": "source CSV price unit",
+        "target_unit": "USD per pound",
         "lookback": int(prepared_data.lookback),
         "horizon": int(prepared_data.horizon),
         "split_bounds": {

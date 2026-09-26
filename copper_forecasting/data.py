@@ -41,6 +41,7 @@ class PreparedData:
     target_scaler: MinMaxScaler
     bounds: SplitBounds
     dates: np.ndarray
+    dataset_source: str | None
     input_columns: tuple[str, ...]
     target_column: str
     lookback: int
@@ -75,7 +76,9 @@ def read_dataset(path: Path) -> pd.DataFrame:
     if not np.isfinite(numeric_values).all():
         raise ValueError("Dataset contains missing or non-finite values")
 
-    return frame.sort_values("date", kind="stable").reset_index(drop=True)
+    frame = frame.sort_values("date", kind="stable").reset_index(drop=True)
+    frame.attrs["source_path"] = str(Path(path).resolve())
+    return frame
 
 
 def split_bounds(
@@ -179,6 +182,7 @@ def prepare_data(
         target_scaler=target_scaler,
         bounds=bounds,
         dates=dates,
+        dataset_source=frame.attrs.get("source_path"),
         input_columns=inputs,
         target_column=target_column,
         lookback=lookback,

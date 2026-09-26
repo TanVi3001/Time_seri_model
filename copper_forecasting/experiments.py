@@ -26,6 +26,12 @@ INPUT_COLUMNS = (
 )
 TARGET_COLUMN = "closed_copper_price"
 MODEL_NAMES = ("SimpleRNN", "LSTM", "GRU", "Bi-LSTM")
+COLUMN_UNITS = {
+    "closed_copper_price": "USD per pound",
+    "close_wti_oil": "USD per barrel",
+    "close_gold": "USD per troy ounce",
+    "close_silver": "USD per troy ounce",
+}
 
 
 @dataclass(frozen=True)
@@ -111,11 +117,23 @@ def run_one_step_experiment(
         "strategy": "One-step",
         "seed": int(seed),
         "dataset_rows": int(prepared_data.bounds.total_rows),
+        "dataset_source": prepared_data.dataset_source or "provided DataFrame",
+        "dataset_version": {
+            "rows": int(prepared_data.bounds.total_rows),
+            "date_start": date_start,
+            "date_end": date_end,
+        },
         "date_start": date_start,
         "date_end": date_end,
         "input_columns": list(prepared_data.input_columns),
+        "input_units": {
+            column: COLUMN_UNITS.get(column, "as represented in source CSV")
+            for column in prepared_data.input_columns
+        },
         "target_column": prepared_data.target_column,
-        "target_unit": "source CSV price unit",
+        "target_unit": COLUMN_UNITS.get(
+            prepared_data.target_column, "as represented in source CSV"
+        ),
         "lookback": int(prepared_data.lookback),
         "horizon": 1,
         "split_bounds": {

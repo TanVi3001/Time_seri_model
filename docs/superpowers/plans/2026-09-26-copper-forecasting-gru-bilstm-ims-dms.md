@@ -44,15 +44,15 @@
 - `split_bounds(n_rows: int, train_ratio: float = 0.8, validation_ratio: float = 0.1) -> SplitBounds` dùng floor cho ranh giới 80% và 90%.
 - `prepare_data(frame, input_columns, target_column, lookback, horizon=1, train_ratio=0.8, validation_ratio=0.1) -> PreparedData` fit scaler trên raw train rows, tạo cửa sổ theo origin và chỉ đưa một cửa sổ vào split nếu toàn bộ target của nó nằm trong split đó.
 
-- [ ] **Step 1: Viết test đỏ cho kiểm tra CSV, split, scaler và chỉ số cửa sổ.** Thêm các test nêu trong Review Focus cùng `test_split_bounds_use_chronological_floor_boundaries`.
-- [ ] **Step 2: Chạy test để xác nhận thất bại đúng vì API/chức năng chưa có.**
+- [x] **Step 1: Viết test đỏ cho kiểm tra CSV, split, scaler và chỉ số cửa sổ.** Thêm các test nêu trong Review Focus cùng `test_split_bounds_use_chronological_floor_boundaries`.
+- [x] **Step 2: Chạy test để xác nhận thất bại đúng vì API/chức năng chưa có.**
 
 Run: `pytest -q tests/test_data.py`
 
 Expected: FAIL vì `copper_forecasting.data` chưa tồn tại.
 
-- [ ] **Step 3: Cài đặt dataclass, loader, split và window preparation tối thiểu trong `copper_forecasting/data.py`.** Không fit scaler bằng validation/test; mọi `X` kết thúc tại origin và mọi target vector phải nằm trọn trong đúng split.
-- [ ] **Step 4: Chạy lại kiểm tra dữ liệu.**
+- [x] **Step 3: Cài đặt dataclass, loader, split và window preparation tối thiểu trong `copper_forecasting/data.py`.** Không fit scaler bằng validation/test; mọi `X` kết thúc tại origin và mọi target vector phải nằm trọn trong đúng split.
+- [x] **Step 4: Chạy lại kiểm tra dữ liệu.**
 
 Run: `pytest -q tests/test_data.py`
 
@@ -67,15 +67,15 @@ Expected: PASS.
 **Interfaces:**
 - `evaluate_forecast(y_true, y_pred, zero_tol: float = 1e-8) -> dict[str, float | None]` trả về `mse`, `rmse`, `mae`, `mape`; MAPE là `None` nếu bất kỳ actual nào có trị tuyệt đối `<= zero_tol`.
 
-- [ ] **Step 1: Viết test đỏ** cho dự báo hoàn hảo, metric có giá trị tính tay, mảng khác độ dài, NaN/Inf và MAPE không xác định khi actual gần 0.
-- [ ] **Step 2: Chạy test để xác nhận lỗi do module/hàm chưa tồn tại.**
+- [x] **Step 1: Viết test đỏ** cho dự báo hoàn hảo, metric có giá trị tính tay, mảng khác độ dài, NaN/Inf và MAPE không xác định khi actual gần 0.
+- [x] **Step 2: Chạy test để xác nhận lỗi do module/hàm chưa tồn tại.**
 
 Run: `pytest -q tests/test_metrics.py`
 
 Expected: FAIL vì `evaluate_forecast` chưa được định nghĩa.
 
-- [ ] **Step 3: Cài đặt `evaluate_forecast`** bằng NumPy, kiểm tra shape/finite trước khi tính và không chia cho actual nhỏ hơn ngưỡng.
-- [ ] **Step 4: Chạy lại metric tests.**
+- [x] **Step 3: Cài đặt `evaluate_forecast`** bằng NumPy, kiểm tra shape/finite trước khi tính và không chia cho actual nhỏ hơn ngưỡng.
+- [x] **Step 4: Chạy lại metric tests.**
 
 Run: `pytest -q tests/test_metrics.py`
 
@@ -96,15 +96,15 @@ Expected: PASS.
 - `TrainingOutcome(model, history, best_epoch: int, epochs_ran: int, training_seconds: float)` lưu model tốt nhất và chi phí train.
 - `fit_model(model, X_train, y_train, X_val, y_val, epochs=100, batch_size=32, patience=10) -> TrainingOutcome` bật EarlyStopping trên `val_loss`, `restore_best_weights=True`, ghi best epoch, số epoch thực chạy và thời gian train.
 
-- [ ] **Step 1: Viết test đỏ** cho tên model hợp lệ/không hợp lệ, input/output shapes, số outputs của DMS, compile MSE/Adam và `test_fit_model_records_best_epoch_and_epochs_ran` sau một lần fit trên dữ liệu tổng hợp nhỏ.
-- [ ] **Step 2: Chạy tests để xác nhận chúng thất bại vì factory/training chưa có.**
+- [x] **Step 1: Viết test đỏ** cho tên model hợp lệ/không hợp lệ, input/output shapes, số outputs của DMS, compile MSE/Adam và `test_fit_model_records_best_epoch_and_epochs_ran` sau một lần fit trên dữ liệu tổng hợp nhỏ.
+- [x] **Step 2: Chạy tests để xác nhận chúng thất bại vì factory/training chưa có.**
 
 Run: `pytest -q tests/test_models.py tests/test_training.py`
 
 Expected: FAIL vì các API chưa tồn tại.
 
-- [ ] **Step 3: Cài đặt seed, hai model factory và `fit_model`** với các giá trị mặc định từ Global Constraints.
-- [ ] **Step 4: Chạy lại tests model/training.**
+- [x] **Step 3: Cài đặt seed, hai model factory và `fit_model`** với các giá trị mặc định từ Global Constraints.
+- [x] **Step 4: Chạy lại tests model/training.**
 
 Run: `pytest -q tests/test_models.py tests/test_training.py`
 
@@ -123,15 +123,15 @@ Expected: PASS.
 - `save_run_result(result: RunResult, output_dir: Path) -> Path` lưu metadata JSON, dự đoán CSV và metric record; trả về thư mục run.
 - `run_architecture_comparison(frame, output_dir, seeds=(42,), epochs=100, batch_size=32, patience=10) -> list[RunResult]` gọi chung một `PreparedData` cho RNN/LSTM/GRU/Bi-LSTM và mỗi seed.
 
-- [ ] **Step 1: Viết test đỏ** xác nhận bốn model nhận đúng cùng target dates, metric dùng giá gốc, metadata có seed/best epoch/parameter count/timing và file JSON/CSV được ghi.
-- [ ] **Step 2: Chạy test để xác nhận API runner chưa tồn tại.**
+- [x] **Step 1: Viết test đỏ** xác nhận bốn model nhận đúng cùng target dates, metric dùng giá gốc, metadata có seed/best epoch/parameter count/timing và file JSON/CSV được ghi.
+- [x] **Step 2: Chạy test để xác nhận API runner chưa tồn tại.**
 
 Run: `pytest -q tests/test_experiments.py`
 
 Expected: FAIL vì runner và artifact writer chưa tồn tại.
 
-- [ ] **Step 3: Cài đặt runner one-step và lưu artifacts.** Ghi đủ dataset/date range, features, lookback, split boundaries, scaler, optimizer, seed, phiên bản thư viện, metric, tham số, best epoch và thời gian.
-- [ ] **Step 4: Chạy lại experiment tests.**
+- [x] **Step 3: Cài đặt runner one-step và lưu artifacts.** Ghi đủ dataset/date range, features, lookback, split boundaries, scaler, optimizer, seed, phiên bản thư viện, metric, tham số, best epoch và thời gian.
+- [x] **Step 4: Chạy lại experiment tests.**
 
 Run: `pytest -q tests/test_experiments.py`
 
@@ -149,15 +149,15 @@ Expected: PASS.
 - `evaluate_by_horizon(y_true: np.ndarray, y_pred: np.ndarray, target_scaler, zero_tol=1e-8) -> tuple[pd.DataFrame, dict]` inverse-transform, tính `mse`, `rmse`, `mae`, `mape` từng lead và metric gộp trên toàn bộ origin/lead pairs.
 - `run_multistep_comparison(frame, output_dir, seeds=(42,), lookback=30, horizon=5, epochs=100, batch_size=32, patience=10) -> list[RunResult]` huấn luyện GRU one-step cho IMS và GRU multi-output cho DMS trên cùng split/origins cho mỗi seed.
 
-- [ ] **Step 1: Viết test đỏ** cho origin có horizon đầy đủ trong test, cuốn prediction đầu vào IMS, shape `[origins, H]`, metric theo lead và đối xứng origins IMS/DMS.
-- [ ] **Step 2: Chạy test để xác nhận hàm multi-step chưa tồn tại.**
+- [x] **Step 1: Viết test đỏ** cho origin có horizon đầy đủ trong test, cuốn prediction đầu vào IMS, shape `[origins, H]`, metric theo lead và đối xứng origins IMS/DMS.
+- [x] **Step 2: Chạy test để xác nhận hàm multi-step chưa tồn tại.**
 
 Run: `pytest -q tests/test_multistep.py`
 
 Expected: FAIL vì các hàm multi-step chưa tồn tại.
 
-- [ ] **Step 3: Cài đặt IMS/DMS** theo shared GRU(32), copper-only scaler và cùng origin set; suy luận không truy cập nhãn tương lai bên trong horizon.
-- [ ] **Step 4: Chạy lại multi-step tests.**
+- [x] **Step 3: Cài đặt IMS/DMS** theo shared GRU(32), copper-only scaler và cùng origin set; suy luận không truy cập nhãn tương lai bên trong horizon.
+- [x] **Step 4: Chạy lại multi-step tests.**
 
 Run: `pytest -q tests/test_multistep.py`
 
@@ -179,15 +179,15 @@ Expected: PASS.
 - `python -m copper_forecasting --dataset PATH --output-dir PATH [--seeds N [N ...]] [--epochs N] [--models NAME [NAME ...]] [--skip-multistep]` chạy hai protocol (trừ khi chọn tùy chọn bỏ qua multi-step), lưu kết quả vào output directory. Mặc định là seed 42 và cả bốn model; các tên hợp lệ là `SimpleRNN`, `LSTM`, `GRU`, `Bi-LSTM`.
 - `plot_architecture_comparison(results, output_path)` và `plot_multistep_errors(by_horizon, output_path)` tạo hình PNG không cần thao tác notebook.
 
-- [ ] **Step 1: Viết test đỏ** `test_cli_smoke_writes_expected_artifacts` cho CLI arguments, file outputs kỳ vọng và smoke run trên CSV tạm ít nhất 100 dòng với một GRU, một seed, một epoch.
-- [ ] **Step 2: Chạy CLI tests để xác nhận thiếu entry point/artifacts.**
+- [x] **Step 1: Viết test đỏ** `test_cli_smoke_writes_expected_artifacts` cho CLI arguments, file outputs kỳ vọng và smoke run trên CSV tạm ít nhất 100 dòng với một GRU, một seed, một epoch.
+- [x] **Step 2: Chạy CLI tests để xác nhận thiếu entry point/artifacts.**
 
 Run: `pytest -q tests/test_cli.py`
 
 Expected: FAIL vì CLI và plots chưa được định nghĩa.
 
-- [ ] **Step 3: Cài đặt CLI và hai plot; cập nhật README/dataset README và cleaning log** với lệnh chạy, protocol, nguồn/các URL, đơn vị hiển thị của từng futures series, phạm vi dữ liệu, cột, quy tắc ghép/loại thiếu, giới hạn tái lập và vị trí artifacts.
-- [ ] **Step 4: Chạy smoke test và toàn bộ test suite.**
+- [x] **Step 3: Cài đặt CLI và hai plot; cập nhật README/dataset README và cleaning log** với lệnh chạy, protocol, nguồn/các URL, đơn vị hiển thị của từng futures series, phạm vi dữ liệu, cột, quy tắc ghép/loại thiếu, giới hạn tái lập và vị trí artifacts.
+- [x] **Step 4: Chạy smoke test và toàn bộ test suite.**
 
 Run: `pytest -q tests/test_cli.py`
 
