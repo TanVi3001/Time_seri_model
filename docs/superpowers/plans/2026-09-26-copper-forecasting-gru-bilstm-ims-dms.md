@@ -207,20 +207,20 @@ Expected: PASS.
 - Dùng CLI Task 6 để chạy RNN/LSTM/GRU/Bi-LSTM one-step và GRU IMS/DMS với cùng cấu hình từ spec.
 - Mỗi Notion Experiment Results row dùng `Model` tương ứng, `Strategy` One-step/IMS/DMS, các cột MSE/RMSE/MAE/MAPE, `Training Time (s)` và Ghi chú cho run ID, seed, lookback/horizon, split, inference time và parameter count.
 
-- [ ] **Step 1: Chạy merge/validation của dữ liệu hiện có và ghi kết quả vào cleaning log:** date range, rows, columns, duplicate/missing counts, raw files và quy tắc join.
+- [x] **Step 1: Chạy merge/validation của dữ liệu hiện có và ghi kết quả vào cleaning log:** date range, rows, columns, duplicate/missing counts, raw files và quy tắc join.
 
 Run: `python merge_investing_data.py`
 
 Expected: dataset được tái tạo với 4.658 rows, 10 columns, dates 2006-01-26 đến 2026-09-25, 0 missing cells và 0 duplicate dates.
 
-- [ ] **Step 2: Chạy runner đầy đủ** trên dataset canonical; lưu kết quả và biểu đồ dưới `results/`.
+- [x] **Step 2: Chạy runner đầy đủ** trên dataset canonical; lưu kết quả và biểu đồ dưới `results/`.
 
 Run: `python -m copper_forecasting --dataset data/copper_investing_2006_2026.csv --output-dir results --seeds 42`
 
 Expected: có bốn run one-step, hai run multi-step, metric test raw-price và metadata cho từng run.
 
-- [ ] **Step 3: Cập nhật T4/T5/T6/T1, Dataset chính, Experiment Results và Project Workspace.** Dùng nội dung fetch hiện tại để chỉ sửa đúng properties/content; task T4–T6 chỉ chuyển Done khi bước 2 thành công.
-- [ ] **Step 4: Fetch lại các trang/database đã cập nhật** để xác nhận status, metric và protocol khớp artifacts; ghi lại link kết quả trong README.
+- [x] **Step 3: Cập nhật T4/T5/T6/T1, Dataset chính, Experiment Results và Project Workspace.** Dùng nội dung fetch hiện tại để chỉ sửa đúng properties/content; task T4–T6 chỉ chuyển Done khi bước 2 thành công.
+- [x] **Step 4: Fetch lại các trang/database đã cập nhật** để xác nhận status, metric và protocol khớp artifacts; ghi lại link kết quả trong README.
 
 Expected: trang T4/T5/T6 giải thích đúng mô hình và kết quả; T1 trỏ tới metric dùng chung; Dataset chính nêu URL, 4.658 dòng và biến đổi; cleaning log khớp CSV; Experiment Results có một hàng cho mỗi run; project notes định nghĩa đúng IMS và DMS multi-output.
 

@@ -1,0 +1,109 @@
+{
+  "batch_size": 32,
+  "best_epoch": 30,
+  "dataset_rows": 4658,
+  "dataset_source": "D:\\research\\Time_seri_model\\.worktrees\\copper-forecasting-gru-bilstm-ims-dms\\data\\copper_investing_2006_2026.csv",
+  "dataset_version": {
+    "date_end": "2026-09-25T00:00:00",
+    "date_start": "2006-01-26T00:00:00",
+    "rows": 4658
+  },
+  "date_end": "2026-09-25T00:00:00",
+  "date_start": "2006-01-26T00:00:00",
+  "epochs_ran": 40,
+  "horizon": 1,
+  "inference_seconds": 0.43167459999676794,
+  "input_columns": [
+    "closed_copper_price",
+    "close_wti_oil",
+    "close_gold",
+    "close_silver"
+  ],
+  "input_units": {
+    "close_gold": "USD per troy ounce",
+    "close_silver": "USD per troy ounce",
+    "close_wti_oil": "USD per barrel",
+    "closed_copper_price": "USD per pound"
+  },
+  "lookback": 30,
+  "loss": "mse",
+  "max_epochs": 100,
+  "metrics": {
+    "mae": 0.41458951557143053,
+    "mape": 7.145716689180197,
+    "mse": 0.31587703861814787,
+    "rmse": 0.5620293930197493
+  },
+  "model": "LSTM",
+  "optimizer": {
+    "learning_rate": 0.001,
+    "name": "Adam"
+  },
+  "parameter_count": 4769,
+  "patience": 10,
+  "run_id": "lstm_one_step_seed42",
+  "scaler": {
+    "feature": {
+      "data_max_": [
+        4.762,
+        145.29,
+        2069.4,
+        48.599
+      ],
+      "data_min_": [
+        1.2655,
+        11.57,
+        541.3,
+        8.79
+      ],
+      "min_": [
+        -0.361933361933362,
+        -0.08652408016751421,
+        -0.3542307440612525,
+        -0.22080434072697128
+      ],
+      "scale_": [
+        0.28600028600028604,
+        0.007478312892611427,
+        0.000654407434068451,
+        0.02511994775050868
+      ]
+    },
+    "fit_rows": [
+      0,
+      3726
+    ],
+    "target": {
+      "data_max_": [
+        4.762
+      ],
+      "data_min_": [
+        1.2655
+      ],
+      "min_": [
+        -0.361933361933362
+      ],
+      "scale_": [
+        0.28600028600028604
+      ]
+    },
+    "type": "MinMaxScaler"
+  },
+  "seed": 42,
+  "split_bounds": {
+    "total_rows": 4658,
+    "train_end": 3726,
+    "validation_end": 4192
+  },
+  "strategy": "One-step",
+  "target_column": "closed_copper_price",
+  "target_unit": "USD per pound",
+  "training_seconds": 38.40554120000161,
+  "versions": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "python": "3.12.10",
+    "scikit_learn": "1.9.1",
+    "tensorflow": "2.21.0"
+  }
+}

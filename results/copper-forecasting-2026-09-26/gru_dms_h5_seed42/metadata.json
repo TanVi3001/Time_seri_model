@@ -1,0 +1,109 @@
+{
+  "batch_size": 32,
+  "best_epoch": 7,
+  "dataset_rows": 4658,
+  "dataset_source": "D:\\research\\Time_seri_model\\.worktrees\\copper-forecasting-gru-bilstm-ims-dms\\data\\copper_investing_2006_2026.csv",
+  "dataset_version": {
+    "date_end": "2026-09-25T00:00:00",
+    "date_start": "2006-01-26T00:00:00",
+    "rows": 4658
+  },
+  "date_end": "2026-09-25T00:00:00",
+  "date_start": "2006-01-26T00:00:00",
+  "epochs_ran": 17,
+  "horizon": 5,
+  "inference_seconds": 0.4464508999953978,
+  "input_columns": [
+    "closed_copper_price"
+  ],
+  "lookback": 30,
+  "loss": "mse",
+  "max_epochs": 100,
+  "metrics": {
+    "mae": 0.1808817619735544,
+    "mape": 3.386285932428356,
+    "mse": 0.06218143311860484,
+    "rmse": 0.24936205228262948
+  },
+  "metrics_by_horizon": [
+    {
+      "horizon": 1,
+      "mae": 0.12526704093542965,
+      "mape": 2.3027485566076638,
+      "mse": 0.029902335944889787,
+      "rmse": 0.17292291908503565
+    },
+    {
+      "horizon": 2,
+      "mae": 0.17192561729794198,
+      "mape": 3.191143853951787,
+      "mse": 0.05507370529128809,
+      "rmse": 0.2346778755896859
+    },
+    {
+      "horizon": 3,
+      "mae": 0.19001687783815643,
+      "mape": 3.5332409859967515,
+      "mse": 0.06575866504441434,
+      "rmse": 0.25643452389336024
+    },
+    {
+      "horizon": 4,
+      "mae": 0.21402665282785893,
+      "mape": 4.0040969556572525,
+      "mse": 0.08244547915570422,
+      "rmse": 0.2871332080336655
+    },
+    {
+      "horizon": 5,
+      "mae": 0.20317262096838512,
+      "mape": 3.900199309928324,
+      "mse": 0.07772698015672777,
+      "rmse": 0.2787955884814675
+    }
+  ],
+  "model": "GRU",
+  "optimizer": {
+    "learning_rate": 0.001,
+    "name": "Adam"
+  },
+  "parameter_count": 3525,
+  "patience": 10,
+  "run_id": "gru_dms_h5_seed42",
+  "scaler": {
+    "feature_data_max": [
+      4.762
+    ],
+    "feature_data_min": [
+      1.2655
+    ],
+    "fit_rows": [
+      0,
+      3726
+    ],
+    "target_data_max": [
+      4.762
+    ],
+    "target_data_min": [
+      1.2655
+    ],
+    "type": "MinMaxScaler"
+  },
+  "seed": 42,
+  "split_bounds": {
+    "total_rows": 4658,
+    "train_end": 3726,
+    "validation_end": 4192
+  },
+  "strategy": "DMS",
+  "target_column": "closed_copper_price",
+  "target_unit": "USD per pound",
+  "training_seconds": 20.547658700001193,
+  "versions": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "python": "3.12.10",
+    "scikit_learn": "1.9.1",
+    "tensorflow": "2.21.0"
+  }
+}

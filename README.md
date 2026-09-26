@@ -46,6 +46,33 @@ Mặc định, CLI chạy SimpleRNN, LSTM, GRU và Bi-LSTM một bước; tiếp
 
 Mỗi run có thư mục riêng với `metadata.json`, `metrics.json` và `predictions.csv`; run nhiều bước còn có `metrics_by_horizon.csv`. Thư mục gốc có `one_step_metrics.csv`, `multistep_metrics_by_horizon.csv`, `architecture_comparison.png` và `multistep_errors.png`.
 
+## Kết quả thực nghiệm ngày 26-09-2026
+
+Một lần chạy với seed 42 trên test 2006–2026 cho kết quả sau (giá đồng USD/pound):
+
+| Mô hình | MSE | RMSE | MAE | MAPE | Train (s) | Best epoch |
+|---|---:|---:|---:|---:|---:|---:|
+| SimpleRNN | 0.430026 | 0.655764 | 0.523579 | 9.119983% | 23.980 | 34 |
+| LSTM | 0.315877 | 0.562029 | 0.414590 | 7.145717% | 38.406 | 30 |
+| GRU | 0.050938 | 0.225694 | 0.173044 | 3.241153% | 22.252 | 9 |
+| Bi-LSTM | 0.332849 | 0.576931 | 0.426178 | 7.347024% | 51.702 | 35 |
+
+GRU có RMSE thấp nhất trong lần chạy này. Kết quả dùng một seed, vì vậy đây là so sánh quan sát được chứ chưa đo độ dao động giữa các lần khởi tạo.
+
+Với 462 test origins và horizon 5 (2,310 dự báo cho mỗi chiến lược), RMSE/MAE theo lead là:
+
+| Lead | IMS RMSE | IMS MAE | DMS RMSE | DMS MAE |
+|---:|---:|---:|---:|---:|
+| 1 | 0.136772 | 0.094805 | 0.172923 | 0.125267 |
+| 2 | 0.189437 | 0.135218 | 0.234678 | 0.171926 |
+| 3 | 0.233027 | 0.169301 | 0.256435 | 0.190017 |
+| 4 | 0.272330 | 0.202032 | 0.287133 | 0.214027 |
+| 5 | 0.306472 | 0.232529 | 0.278796 | 0.203173 |
+
+Gộp mọi origin/lead, IMS đạt RMSE 0.235365 và MAE 0.166777; DMS đạt RMSE 0.249362 và MAE 0.180882. IMS thấp hơn ở lead 1–4; DMS thấp hơn ở lead 5 và có thời gian train/suy luận ngắn hơn trong lần chạy này (20.548/0.446 giây so với 25.573/1.119 giây của IMS). Số tham số lần lượt là 3,525 cho DMS và 3,393 cho IMS.
+
+Artifacts đã lưu tại [`results/copper-forecasting-2026-09-26/`](results/copper-forecasting-2026-09-26/): [bảng one-step](results/copper-forecasting-2026-09-26/one_step_metrics.csv), [metric theo horizon](results/copper-forecasting-2026-09-26/multistep_metrics_by_horizon.csv), [biểu đồ kiến trúc](results/copper-forecasting-2026-09-26/architecture_comparison.png), [biểu đồ sai số horizon](results/copper-forecasting-2026-09-26/multistep_errors.png), [metadata GRU](results/copper-forecasting-2026-09-26/gru_one_step_seed42/metadata.json), [metadata IMS](results/copper-forecasting-2026-09-26/gru_ims_h5_seed42/metadata.json) và [metadata DMS](results/copper-forecasting-2026-09-26/gru_dms_h5_seed42/metadata.json).
+
 Chạy kiểm thử bằng:
 
 ```powershell
