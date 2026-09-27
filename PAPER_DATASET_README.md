@@ -1,46 +1,33 @@
-# Copper-price paper reproduction setup
+# Dataset và phạm vi tái lập
 
-This folder contains paper-specific notebooks for comparing a vanilla RNN (`SimpleRNN`) with an LSTM on the copper-price forecasting problem described in:
+## Bài báo và notebook paper-inspired
 
-Chen et al. (2023), *Copper price prediction using LSTM recurrent neural network integrated simulated annealing algorithm*, PLOS ONE 18(10): e0285631.
+Chen et al. (2023), [Copper price prediction using LSTM recurrent neural network integrated simulated annealing algorithm](https://doi.org/10.1371/journal.pone.0285631), mô tả dữ liệu 1990-01-01 đến 2009-12-31 và 4,870 quan sát sau xử lý thiếu. Bài báo là tài liệu tham khảo cho bài toán và nguồn dữ liệu; repo không tuyên bố tái lập toàn bộ thuật toán LSTM kết hợp simulated annealing.
 
-## Time window used for the demo
+Hai notebook cũ (`RNN_Copper_Paper_2006_2026.ipynb`, `LSTM_Copper_Paper_2006_2026.ipynb`) giữ cấu hình paper-inspired riêng: lookback 22, đầu vào WTI/vàng/bạc, SimpleRNN hoặc LSTM với kiến trúc rộng 39 rồi 111, Dense 32, dropout 0.2, batch 64 và learning rate `5e-5`. Không dùng trực tiếp các kết quả cũ này để xếp hạng với runner mới.
 
-The paper used 1990-01-01 to 2009-12-31. The demo changes this to the latest 20-year window anchored to the requested date:
+## Dataset hiện dùng
 
-- Start: `2006-01-01`
-- Inclusive end: `2026-09-26`
+File chuẩn là [`data/copper_investing_2006_2026.csv`](data/copper_investing_2006_2026.csv), được tạo bởi `merge_investing_data.py` từ các CSV trong `data/raw_investing/`.
 
-The canonical CSV is already filtered to the inclusive window 2006-01-01 through 2026-09-26. Because 2026-09-26 is a Saturday, the latest available trading date is 2026-09-25.
+- Phạm vi cần lọc: 2006-01-01 đến 2026-09-26; ngày giao dịch thực tế trong file: 2006-01-26 đến 2026-09-25.
+- Kích thước chuẩn: 4,658 hàng × 10 cột (cột ngày và chín chuỗi số).
+- Sau căn chỉnh theo ngày: 0 giá trị thiếu và 0 ngày trùng.
+- Ghép inner join trên `date`; không nội suy. Các ngày không có đủ mọi chuỗi bị loại.
+- Giá trị `Price` được parse thành số; volume đồng có hậu tố K/M/B được chuyển sang số lượng.
+- Ngày lưu trong file ở dạng ISO `YYYY-MM-DD`, tăng dần.
 
-## Paper variables
+Các chuỗi giá là đồng COMEX, WTI, vàng và bạc; dữ liệu liên quan còn gồm Dollar Index, lợi suất Treasury 10 năm, NASDAQ Composite, Dow Jones và volume đồng. Đơn vị báo giá theo nguồn: đồng USD/pound, WTI USD/barrel, vàng/bạc USD/troy ounce, lợi suất phần trăm, chỉ số theo điểm. CSV gốc không lưu metadata đơn vị riêng; chi tiết nguồn và giới hạn của ngày export được ghi trong [`data/DATA_CLEANING_LOG.md`](data/DATA_CLEANING_LOG.md).
 
-The paper describes nine aligned series:
+Nguồn lịch sử chính: [đồng](https://www.investing.com/commodities/copper-historical-data), [WTI](https://www.investing.com/commodities/crude-oil-historical-data), [vàng](https://www.investing.com/commodities/gold-historical-data), [bạc](https://www.investing.com/commodities/silver-historical-data). Các chuỗi bổ sung được liệt kê cùng URL trong nhật ký dữ liệu.
 
-- copper closing price (target)
-- copper volume
-- Dollar Index
-- 10-year Treasury yield
-- Nasdaq index
-- Dow Jones index
-- WTI crude-oil price
-- gold price
-- silver price
+## Giao thức runner mới
 
-Following the paper, the three model inputs are WTI, gold and silver. The notebooks also calculate Spearman correlations so this choice can be checked on the refreshed window.
+Package `copper_forecasting` thực hiện hai thí nghiệm tách biệt:
 
-## Data source used by the notebooks
+1. **So sánh kiến trúc một bước:** SimpleRNN/LSTM/GRU/Bi-LSTM, đầu vào lịch sử 30 phiên của bốn chuỗi giá đồng/WTI/vàng/bạc, dự đoán giá đồng phiên kế tiếp.
+2. **IMS và DMS nhiều bước:** hai GRU dùng cùng một biến là giá đồng, cùng lookback 30, horizon mặc định 5 và cùng origins trong test. IMS cuốn dự báo của chính nó; DMS dự đoán trực tiếp vector `[t+1, …, t+H]`.
 
-The notebooks now use the downloaded Investing.com data directly. The nine raw series were merged by date, rows missing any variable were removed, and the result is saved as `data/copper_investing_2006_2026.csv` (4,658 rows, 9 variables plus the date column). No Yahoo Finance API is used.
+Cả hai dùng split theo thời gian 80/10/10, scaler chỉ fit trên train, Adam 0.001, MSE, batch 32, tối đa 100 epoch, early stopping patience 10 và seed mặc định 42. Metric được tính trên giá gốc sau inverse transform. Giá trị tương lai của WTI/vàng/bạc không được đưa vào dự báo; IMS không cập nhật bằng actual trong horizon.
 
-For Kaggle, upload `copper_investing_2006_2026.csv` as a dataset, then change `LOCAL_CSV_PATH` in the notebook to the path shown under `/kaggle/input/...`. For local Jupyter, keep the file at `data/copper_investing_2006_2026.csv`.
-
-## Reproduction choices
-
-- chronological split; no shuffling
-- lookback window: 22 observations, matching the paper model input shape
-- default test horizon: 242 observations; optional horizons: 363 and 485
-- paper-inspired recurrent widths: 39 then 111
-- dense layer: 32 units; dropout: 0.2; batch size: 64; epochs: 100; learning rate: `5e-5`
-- scalers are fitted on the pre-test training portion to avoid future leakage
-- the paper's simulated-annealing search is not run by default; the notebooks compare RNN and LSTM using the paper's reported LSTM widths and learning rate
+Chạy hướng dẫn và lệnh đầy đủ trong [`README.md`](README.md). Nhật ký chuyển đổi chi tiết, số hàng từng nguồn và missing/duplicate counts ở [`data/DATA_CLEANING_LOG.md`](data/DATA_CLEANING_LOG.md).
