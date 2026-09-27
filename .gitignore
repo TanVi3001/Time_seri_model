@@ -6,3 +6,4 @@ __pycache__/
 .pytest_cache/
 *.ipynb_checkpoints/
 data/copper_paper_2006_2026.csv
+all_algorithm_comparison/

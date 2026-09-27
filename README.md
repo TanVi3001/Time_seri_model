@@ -79,4 +79,4 @@ Chạy kiểm thử bằng:
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-`notebooks/RNN_Copper_Paper_2006_2026.ipynb` và `notebooks/LSTM_Copper_Paper_2006_2026.ipynb` vẫn là các thử nghiệm paper-inspired riêng; các thiết lập cũ của chúng được mô tả trong [`docs/PAPER_DATASET_README.md`](docs/PAPER_DATASET_README.md).
+Notebook [`notebooks/Compare_All_Algorithms.ipynb`](notebooks/Compare_All_Algorithms.ipynb) so sánh SimpleRNN, LSTM, GRU, Bi-LSTM trên cùng protocol, đồng thời so sánh GRU-IMS với GRU-DMS cho dự báo nhiều bước. Hai notebook [`notebooks/RNN_Copper_Paper_2006_2026.ipynb`](notebooks/RNN_Copper_Paper_2006_2026.ipynb) và [`notebooks/LSTM_Copper_Paper_2006_2026.ipynb`](notebooks/LSTM_Copper_Paper_2006_2026.ipynb) giữ cấu hình paper-inspired riêng; chi tiết nằm trong [`docs/PAPER_DATASET_README.md`](docs/PAPER_DATASET_README.md).
