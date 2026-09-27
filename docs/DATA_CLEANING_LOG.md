@@ -19,7 +19,7 @@ Các file đầu vào là các CSV lịch sử Investing.com trong `data/raw_inv
 
 ## Quy tắc parse và ghép
 
-Việc làm sạch có thể tái tạo bằng `python merge_investing_data.py`.
+Việc làm sạch có thể tái tạo bằng `python scripts/merge_investing_data.py`.
 
 1. Parse `Date` theo định dạng `%m/%d/%Y`; parse `Price` thành số sau khi bỏ dấu phẩy. `Vol.` đồng được chuyển hậu tố K/M/B thành số lượng contracts.
 2. Ghép các file bổ sung của cùng chuỗi, sắp ngày tăng dần, bỏ ngày trùng và giữ bản ghi cuối trong thứ tự file. Trong các file hiện có, số hàng hợp lệ sau parse bằng số hàng đầu vào; không có hàng nào bị loại do ngày hoặc `Price` không đọc được.

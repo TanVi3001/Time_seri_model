@@ -3,7 +3,7 @@ Merge Investing.com CSV exports into the canonical dataset used by the
 RNN/LSTM notebooks.
 
 Run from this repository root:
-    python merge_investing_data.py
+    python scripts/merge_investing_data.py
 
 Output:
     data/copper_investing_2006_2026.csv
@@ -15,9 +15,9 @@ import numpy as np
 import pandas as pd
 
 
-BASE_DIR = Path(__file__).resolve().parent
-RAW_DIR = BASE_DIR / "data" / "raw_investing"
-OUTPUT_PATH = BASE_DIR / "data" / "copper_investing_2006_2026.csv"
+PROJECT_DIR = Path(__file__).resolve().parents[1]
+RAW_DIR = PROJECT_DIR / "data" / "raw_investing"
+OUTPUT_PATH = PROJECT_DIR / "data" / "copper_investing_2006_2026.csv"
 
 START_DATE = pd.Timestamp("2006-01-01")
 END_DATE = pd.Timestamp("2026-09-26")

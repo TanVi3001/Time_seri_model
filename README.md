@@ -4,17 +4,17 @@ Repo có hai notebook cũ lấy cảm hứng từ bài báo Chen et al. (2023) v
 
 ## Dữ liệu
 
-Dataset chuẩn là [`data/copper_investing_2006_2026.csv`](data/copper_investing_2006_2026.csv): 4,658 ngày giao dịch từ 2006-01-26 đến 2026-09-25, gồm ngày và chín chuỗi giá/liên quan. Nguồn là các CSV Investing.com trong `data/raw_investing/`; cách parse, ghép, đơn vị và số liệu kiểm tra được ghi trong [`data/DATA_CLEANING_LOG.md`](data/DATA_CLEANING_LOG.md). Chạy `python merge_investing_data.py` để tái tạo file chuẩn.
+Dataset chuẩn là [`data/copper_investing_2006_2026.csv`](data/copper_investing_2006_2026.csv): 4,658 ngày giao dịch từ 2006-01-26 đến 2026-09-25, gồm ngày và chín chuỗi giá/liên quan. Nguồn là các CSV Investing.com trong `data/raw_investing/`; cách parse, ghép, đơn vị và số liệu kiểm tra được ghi trong [`docs/DATA_CLEANING_LOG.md`](docs/DATA_CLEANING_LOG.md). Chạy `python scripts/merge_investing_data.py` để tái tạo file chuẩn.
 
 Dataset này không phải bản tái lập chính xác bộ 1990–2009, 4,870 hàng của bài báo. Đơn vị giá đồng là USD/pound; WTI USD/barrel; vàng và bạc USD/troy ounce. Các đơn vị không được lưu trong CSV gốc và được đối chiếu từ trang instrument/contract.
 
 ## Cài đặt trên Windows
 
-Runner đã được chạy với Python 3.12.10, TensorFlow 2.21 và CPU trên Windows. Dependency được ghim trong `requirements-win-py312.lock.txt`.
+Runner đã được chạy với Python 3.12.10, TensorFlow 2.21 và CPU trên Windows. Dependency được ghim trong `requirements/requirements-win-py312.lock.txt`.
 
 ```powershell
 py -3.12 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements-win-py312.lock.txt
+.\.venv\Scripts\python.exe -m pip install -r requirements\requirements-win-py312.lock.txt
 ```
 
 ## Chạy toàn bộ giao thức
@@ -79,4 +79,4 @@ Chạy kiểm thử bằng:
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-`RNN_Copper_Paper_2006_2026.ipynb` và `LSTM_Copper_Paper_2006_2026.ipynb` vẫn là các thử nghiệm paper-inspired riêng; các thiết lập cũ của chúng được mô tả trong [`PAPER_DATASET_README.md`](PAPER_DATASET_README.md).
+`notebooks/RNN_Copper_Paper_2006_2026.ipynb` và `notebooks/LSTM_Copper_Paper_2006_2026.ipynb` vẫn là các thử nghiệm paper-inspired riêng; các thiết lập cũ của chúng được mô tả trong [`docs/PAPER_DATASET_README.md`](docs/PAPER_DATASET_README.md).
